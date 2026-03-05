@@ -338,6 +338,20 @@
         <div class="title">🌟 快乐学拼音</div>
         <div class="subtitle">两种练习方式，轻松掌握拼音</div>
         
+        <!-- 手机端音乐按钮（默认隐藏，PC端不显示） -->
+        <div id="mobileMusicBtn" style="margin: 20px 0; text-align: center; display: none;">
+            <button onclick="startMusic()" style="
+                background: #4ECDC4;
+                color: white;
+                border: none;
+                padding: 12px 30px;
+                border-radius: 25px;
+                font-size: 16px;
+                cursor: pointer;
+                font-family: 'Microsoft YaHei', sans-serif;
+            ">🎵 点击开启背景音乐</button>
+        </div>
+
         <div class="btn-container">
             <button class="mode-btn btn-pinyin" onclick="startQuiz('pinyin_to_char')">
                 🎯<br>看拼音<br>认汉字
@@ -649,7 +663,32 @@ function playBGM() {
 // 就添加在这里！enterApp 函数
 function enterApp() {
     document.getElementById('welcome').style.display = 'none';
-    playBGM();
+    showPage('home');
+    
+    // 检测设备类型
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        // 手机端：显示按钮，等待用户点击
+        document.getElementById('mobileMusicBtn').style.display = 'block';
+    } else {
+        // PC端：直接自动播放
+        bgm.volume = 0.3;
+        bgm.play().catch(e => {
+            // 如果PC端也被阻止，显示按钮备用
+            document.getElementById('mobileMusicBtn').style.display = 'block';
+        });
+    }
+}
+
+// 手机端点击按钮后播放音乐
+function startMusic() {
+    bgm.volume = 0.3;
+    bgm.play().then(() => {
+        document.getElementById('mobileMusicBtn').innerHTML = '<span style="color: #4ECDC4; font-weight: bold; font-size: 18px;">🔊 音乐已开启</span>';
+    }).catch(e => {
+        alert('请检查手机是否静音或刷新页面重试');
+    });
 }
 
 // 或者其他函数后面，只要是平级（前面不要有缩进）就行
